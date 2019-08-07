@@ -1,0 +1,69 @@
+import sinon from 'sinon'
+
+import { html } from 'lit-element'
+
+import { Popup } from '../../src/popup'
+
+export const ID_BUTTON_SAVE = 'button-save'
+export const ID_BUTTON_CLOSE = 'button-close'
+
+export const POPUP_MESSAGE = 'message'
+export const POPUP_RESULT = 'asdf'
+
+export const RENDERER_POPUPS = {
+  [POPUP_MESSAGE]: (layout, model, closeHandler) => html`
+    <x-popup-test
+      .layout="${layout}"
+      .model="${model}"
+      .onClose="${closeHandler}"
+    ></x-popup-test>
+  `,
+}
+
+class TestPopup extends Popup {
+  static get properties () {
+    return {
+      __state: Object,
+    }
+  }
+
+  constructor () {
+    super()
+
+    this.restore = sinon.stub()
+
+    this.__state = {
+      a: 123,
+    }
+
+    this.__handlers = {
+      close: () => this.onClose(),
+      save: () => this.onClose(POPUP_RESULT),
+    }
+  }
+
+  freeze () {
+    return this.__state
+  }
+
+  update (changedProps) {
+    this.__state = this.model
+    super.update(changedProps)
+  }
+
+  render () {
+    return html`
+      <button
+        id="${ID_BUTTON_SAVE}"
+        @click="${this.__handlers.save}"
+      >Save</button>
+
+      <button
+        id="${ID_BUTTON_CLOSE}"
+        @click="${this.__handlers.close}"
+      >Close</button>
+    `
+  }
+}
+
+window.customElements.define('x-popup-test', TestPopup)
