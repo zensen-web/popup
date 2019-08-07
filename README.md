@@ -165,7 +165,7 @@ class App extends LitElement {
 window.customElements.define('x-app', App)
 ```
 
-## Api
+## API
 
 We can open popups like so:
 
