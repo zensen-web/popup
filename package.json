@@ -1,6 +1,6 @@
 {
   "name": "@zensen/popup",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "description": "A declarative popup stack for native web components",
   "main": "src/index.js",
@@ -13,9 +13,7 @@
     "node": ">=8.5"
   },
   "scripts": {
-    "install:all": "yarn install && yarn install:peers",
-    "install:clear": "rm -rf node_modules && rm yarn.lock",
-    "install:peers": "npm install lit-element lit-html pwa-helpers redux",
+    "install:clear": "rm -rf node_modules",
     "test": "karma start --single-run --browsers HeadlessChromium",
     "test:watch": "karma start --browsers HeadlessChromium --auto-watch --single-run=false"
   },
@@ -45,8 +43,12 @@
     "karma-chai": "^0.1.0",
     "karma-chrome-launcher": "^3.0.0",
     "karma-mocha": "^1.3.0",
+    "lit-element": "^2.2.1",
+    "lit-html": "^1.1.1",
     "mocha": "^6.1.3",
     "puppeteer": "^1.19.0",
+    "pwa-helpers": "^0.9.1",
+    "redux": "^4.0.4",
     "sinon": "^7.3.2",
     "webpack": "^4.28.1",
     "webpack-cli": "^3.2.1",
