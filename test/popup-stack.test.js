@@ -5,8 +5,8 @@ import { fixture, html, expect } from '@open-wc/testing'
 
 import { openPopup, popPopup } from '../src'
 import { register, unregister, freeze } from '../src/redux'
-
 import { POPUP_MESSAGE, RENDERER_POPUPS } from './utils/popup'
+import { ID_BLOCKER } from '../src/popup-stack'
 
 const KEY_MAIN = 'main'
 const KEY_NOTIFICATIONS = 'notifications'
@@ -63,7 +63,8 @@ describe('index', () => {
       openPopup(POPUP_MESSAGE, STATE)
       await instance.updateComplete
 
-      popupElem = instance.shadowRoot.firstElementChild
+      const blocker = instance.shadowRoot.getElementById(ID_BLOCKER)
+      popupElem = blocker.firstElementChild
     })
 
     it('has popups', () => expect(instance.getAttribute('haspopup')).to.exist)
@@ -101,7 +102,8 @@ describe('index', () => {
           popPopup()
           await instance.updateComplete
 
-          popupElem = instance.shadowRoot.firstElementChild
+          const blocker = instance.shadowRoot.getElementById(ID_BLOCKER)
+          popupElem = blocker.firstElementChild
         })
 
         it('restores state to the previous popup', () =>

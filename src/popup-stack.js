@@ -3,6 +3,8 @@ import { LitElement, html, css } from 'lit-element'
 
 import { register, unregister, pop, freeze } from './redux'
 
+export const ID_BLOCKER = 'blocker'
+
 export function genComponent (store) {
   return class extends connect(store)(LitElement) {
     static get properties () {
@@ -26,16 +28,22 @@ export function genComponent (store) {
     static get styles () {
       return css`
         :host {
-          display: flex;
+          display: block;
           position: absolute;
           width: 0;
           height: 0;
-          align-items: center;
-          justify-content: center;
           background-color: rgba(0, 0, 0, 0.5);
         }
 
         :host([haspopup]) {
+          width: 100%;
+          height: 100%;
+        }
+
+        .container {
+          display: flex;
+          align-items: center;
+          justify-content: center;
           width: 100%;
           height: 100%;
         }
@@ -49,7 +57,7 @@ export function genComponent (store) {
     }
 
     __initState () {
-      this.__elements = {}
+      this.__popupElem = null
       this.__stack = []
 
       this.key = 'main'
@@ -102,12 +110,11 @@ export function genComponent (store) {
     updateStack (changedProps) {
       this.__hasPopup = Boolean(this.__stack.length)
 
-      const popup = this.__elements.popup
       const stackLength = this.__stack.length
       const oldStack = changedProps.get('__stack')
 
-      if (popup && oldStack && oldStack.length < stackLength) {
-        const state = popup.freeze()
+      if (this.__popupElem && oldStack && oldStack.length < stackLength) {
+        const state = this.__popupElem.freeze()
         store.dispatch(freeze(state, this.key))
       }
     }
@@ -125,18 +132,16 @@ export function genComponent (store) {
     }
 
     updated (changedProps) {
-      this.__elements = {
-        popup: this.shadowRoot.firstElementChild,
-      }
+      const blockerElem = this.shadowRoot.getElementById(ID_BLOCKER)
+      this.__popupElem = blockerElem ? blockerElem.firstElementChild : null
 
-      const popup = this.__elements.popup
       const stack = this.__stack
       const oldStack = changedProps.get('__stack')
 
-      if (popup && oldStack && oldStack.length > stack.length) {
+      if (this.__popupElem && oldStack && oldStack.length > stack.length) {
         const lastItem = this.__stack[this.__stack.length - 1]
         if (lastItem.state) {
-          popup.restore({ ...lastItem.state })
+          this.__popupElem.restore({ ...lastItem.state })
         }
       }
     }
@@ -149,7 +154,11 @@ export function genComponent (store) {
           item.dismiss(new Error('Invalid renderer:', item.key))
         }
 
-        return renderer(this.layout, item.model, this.__handlers.close)
+        return html`
+          <div id="${ID_BLOCKER}" class="container">
+          ${renderer(this.layout, item.model, this.__handlers.close)}
+          </div>
+        `
       }
 
       return html``

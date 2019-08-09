@@ -1,6 +1,6 @@
 {
   "name": "@zensen/popup",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "license": "MIT",
   "description": "A declarative popup stack for native web components",
   "main": "src/index.js",
@@ -58,7 +58,6 @@
   "peerDependencies": {
     "lit-element": "^2.2.1",
     "lit-html": "^1.1.1",
-    "pwa-helpers": "^0.9.1",
-    "redux": "^4.0.4"
+    "pwa-helpers": "^0.9.1"
   }
 }
