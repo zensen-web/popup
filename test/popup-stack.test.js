@@ -62,6 +62,7 @@ describe('index', () => {
 
       openPopup(POPUP_MESSAGE, STATE)
       await instance.updateComplete
+      await instance.updateComplete
 
       const blocker = instance.shadowRoot.getElementById(ID_BLOCKER)
       popupElem = blocker.firstElementChild
@@ -100,6 +101,7 @@ describe('index', () => {
       context('when popup is popped from the stack', () => {
         beforeEach(async () => {
           popPopup()
+          await instance.updateComplete
           await instance.updateComplete
 
           const blocker = instance.shadowRoot.getElementById(ID_BLOCKER)

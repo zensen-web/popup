@@ -9,11 +9,22 @@ export function genComponent (store) {
   return class extends connect(store)(LitElement) {
     static get properties () {
       return {
+        __canRender: Boolean,
         __stack: Array,
+        __open: {
+          reflect: true,
+          type: Boolean,
+          attribute: 'open',
+        },
         __hasPopup: {
           reflect: true,
           type: Boolean,
           attribute: 'haspopup',
+        },
+        __visible: {
+          reflect: true,
+          type: Boolean,
+          attribute: 'visible',
         },
 
         key: String,
@@ -30,20 +41,26 @@ export function genComponent (store) {
         :host {
           display: block;
           position: absolute;
-          width: 0;
-          height: 0;
-          background-color: rgba(0, 0, 0, 0.5);
+          background-color: rgba(0, 0, 0, 0.0);
+          transition: background-color 200ms ease-in;
         }
 
         :host([haspopup]) {
-          width: 100%;
-          height: 100%;
+          background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        :host([visible]) {
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
         }
 
         .container {
           display: flex;
           align-items: center;
           justify-content: center;
+          background-color: transparent;
           width: 100%;
           height: 100%;
         }
@@ -57,6 +74,11 @@ export function genComponent (store) {
     }
 
     __initState () {
+      this.__open = false
+      this.__restore = false
+      this.__visible = false
+      this.__hasPopup = false
+      this.__canRender = true
       this.__popupElem = null
       this.__stack = []
 
@@ -76,6 +98,14 @@ export function genComponent (store) {
           store.dispatch(pop(this.key))
         },
       }
+    }
+
+    connectedCallback () {
+      super.connectedCallback()
+
+      this.addEventListener('transitionend', () => {
+        this.__open = Boolean(this.__stack.length)
+      })
     }
 
     disconnectedCallback () {
@@ -108,6 +138,7 @@ export function genComponent (store) {
     }
 
     updateStack (changedProps) {
+      this.__canRender = false
       this.__hasPopup = Boolean(this.__stack.length)
 
       const stackLength = this.__stack.length
@@ -128,40 +159,47 @@ export function genComponent (store) {
         this.updateStack(changedProps)
       }
 
+      this.__visible = this.__hasPopup || this.__open
       super.update(changedProps)
     }
 
     updated (changedProps) {
       const blockerElem = this.shadowRoot.getElementById(ID_BLOCKER)
       this.__popupElem = blockerElem ? blockerElem.firstElementChild : null
+      this.__canRender = true
 
-      const stack = this.__stack
-      const oldStack = changedProps.get('__stack')
+      if (changedProps.has('__stack')) {
+        const stack = this.__stack
+        const oldStack = changedProps.get('__stack')
 
-      if (this.__popupElem && oldStack && oldStack.length > stack.length) {
+        this.__restore = oldStack && oldStack.length > stack.length
+      }
+
+      if (this.__popupElem && this.__restore) {
         const lastItem = this.__stack[this.__stack.length - 1]
         if (lastItem.state) {
           this.__popupElem.restore({ ...lastItem.state })
         }
+
+        this.__restore = false
       }
     }
 
     render () {
       const item = this.getLastItem()
-      if (item) {
-        const renderer = this.renderers[item.key]
-        if (!renderer) {
-          item.dismiss(new Error('Invalid renderer:', item.key))
-        }
-
-        return html`
-          <div id="${ID_BLOCKER}" class="container">
-          ${renderer(this.layout, item.model, this.__handlers.close)}
-          </div>
-        `
+      const renderer = item ? this.renderers[item.key] : null
+      if (item && !renderer) {
+        item.dismiss(new Error('Invalid renderer:', item.key))
       }
 
-      return html``
+      const canRender = this.__canRender && renderer
+      return this.__hasPopup || this.__open
+        ? html`
+          <div id="${ID_BLOCKER}" class="container">
+            ${canRender ? renderer(this.layout, item.model, this.__handlers.close) : ''}
+          </div>
+        `
+        : html``
     }
   }
 }

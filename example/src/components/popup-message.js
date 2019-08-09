@@ -7,7 +7,11 @@ import { openPopup } from '../../../src'
 class MessagePopup extends Popup {
   static get properties () {
     return {
-      state: Object,
+      __transition: {
+        reflect: true,
+        type: Boolean,
+        attribute: 'transition',
+      },
     }
   }
 
@@ -24,7 +28,15 @@ class MessagePopup extends Popup {
         :host {
           width: 28rem;
           height: 8rem;
-          background-color: red;
+          opacity: 0;
+          background-color: #FFF;
+          transform: translateY(-2.4rem);
+          transition: all 200ms ease-out;
+        }
+
+        :host([transition]) {
+          opacity: 1;
+          transform: translateX(0);
         }
 
         .text {
@@ -51,12 +63,9 @@ class MessagePopup extends Popup {
       message: '',
     }
 
-    this.state = {
-      a: 123,
-    }
-
+    this.__transition = false
     this.__handlers = {
-      close: () => this.onClose(),
+      close: () => (this.__transition = false),
       open: () => openPopup('message', {
         title: 'Sub-Menu',
         message: 'Some more stuff',
@@ -64,21 +73,26 @@ class MessagePopup extends Popup {
     }
   }
 
-  freeze () {
-    return {
-      a: 456,
-    }
+  connectedCallback () {
+    super.connectedCallback()
+
+    this.addEventListener('transitionend', () => {
+      if (!this.__transition) {
+        this.onClose()
+      }
+    })
   }
 
-  restore (state) {
-    this.state = state
+  firstUpdated () {
+    super.firstUpdated()
+
+    this.__transition = true
   }
 
   render () {
     return html`
       <p class="text text-title">${this.model.title}</p>
       <p class="text text-message">${this.model.message}</p>
-      <p class="text">a: ${this.state.a}</p>
 
       <button @click="${this.__handlers.open}">Open</button>
       <button @click="${this.__handlers.close}">Close</button>

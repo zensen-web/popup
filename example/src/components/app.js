@@ -1,4 +1,5 @@
 import './popup-message'
+import './overlay'
 
 import { LitElement, html, css } from 'lit-element'
 
@@ -12,6 +13,13 @@ export const RENDERER_POPUPS = {
       .onClose="${closeHandler}"
     ></x-popup-message>
   `,
+  overlay: (layout, model, closeHandler) => html`
+    <x-overlay
+      .layout="${layout}"
+      .model="${model}"
+      .onClose="${closeHandler}"
+    ></x-overlay>
+`,
 }
 
 class App extends LitElement {
@@ -25,18 +33,21 @@ class App extends LitElement {
 
       :host {
         display: block;
+        width: 100vw;
+        height: 100vh;
         font-size: 1.4rem;
       }
 
       .container {
         display: flex;
+        position: relative;
         width: 100%;
         height: 100%;
         flex-flow: nowrap column;
       }
 
-      .overlay-stack {
-        top: 8rem;
+      .overlay-stack[visible] {
+        top: 4.2rem;
       }
     `
   }
@@ -49,7 +60,7 @@ class App extends LitElement {
   __initHandlers () {
     this.__handlers = {
       showOverlay: () =>
-        openPopup('message', {
+        openPopup('overlay', {
           title: 'Overlay',
           message: 'This is in the overlay stack',
         }, 'overlay'),
