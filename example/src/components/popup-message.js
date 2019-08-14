@@ -76,8 +76,8 @@ class MessagePopup extends Popup {
   connectedCallback () {
     super.connectedCallback()
 
-    this.addEventListener('transitionend', () => {
-      if (!this.__transition) {
+    this.addEventListener('transitionend', e => {
+      if (e.propertyName === 'transform' && !this.__transition) {
         this.onClose()
       }
     })
