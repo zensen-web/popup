@@ -3,6 +3,16 @@ import { css, html } from 'lit-element'
 import { Popup } from '../../../src/popup'
 import { openPopup } from '../../../src'
 
+export const ID_CONTAINER = 'container'
+
+export const TRANSITION_SIDE = {
+  LEFT: 'left',
+  RIGHT: 'right',
+}
+
+const CSS_LEFT = css`left`
+const CSS_RIGHT = css`right`
+
 class Overlay extends Popup {
   static get properties () {
     return {
@@ -11,6 +21,11 @@ class Overlay extends Popup {
         reflect: true,
         type: Boolean,
         attribute: 'transition',
+      },
+
+      side: {
+        reflect: true,
+        type: String,
       },
     }
   }
@@ -31,14 +46,32 @@ class Overlay extends Popup {
         }
 
         .container {
+          position: relative;
+          width: 100%;
+          height: 100%;
+        }
+
+        .content {
+          position: absolute;
+          top: 0;
           width: 28rem;
           height: 100%;
           background-color: #FFF;
+        }
+
+        :host([side=${CSS_LEFT}]) .content {
+          left: 0;
           transform: translateX(-100%);
           transition: transform 200ms ease-out;
         }
 
-        :host([transition]) .container {
+        :host([side=${CSS_RIGHT}]) .content {
+          right: 0;
+          transform: translateX(100%);
+          transition: transform 200ms ease-out;
+        }
+
+        :host([transition]) .content {
           transform: translateX(0);
         }
 
@@ -51,12 +84,20 @@ class Overlay extends Popup {
 
   constructor () {
     super()
+    this.canDismiss = true
+    this.side = TRANSITION_SIDE.LEFT
+
     this.__transition = false
     this.__value = ''
 
     this.__handlers = {
-      dismiss: () => (this.__transition = false),
       keyPress: e => (this.__value = e.currentTarget.value),
+      clickDismissButton: () => this.dismiss(),
+      clickBlocker: e => {
+        if (e.target.id === ID_CONTAINER) {
+          this.dismiss()
+        }
+      },
       transitionEnd: () => {
         if (!this.__transition) {
           this.onClose()
@@ -78,6 +119,12 @@ class Overlay extends Popup {
     this.__value = state.value
   }
 
+  dismiss () {
+    if (this.canDismiss) {
+      this.__transition = false
+    }
+  }
+
   firstUpdated () {
     super.firstUpdated()
 
@@ -87,19 +134,26 @@ class Overlay extends Popup {
   render () {
     return html`
       <div
+        id="${ID_CONTAINER}"
         class="container"
-        @transitionend="${this.__handlers.transitionEnd}"
+        @click="${this.__handlers.clickBlocker}"
       >
-        <p class="text text-title">${this.model.title}</p>
-        <p class="text text-message">${this.model.message}</p>
+        <div class="content" @transitionend="${this.__handlers.transitionEnd}">
+          <p class="text text-title">${this.model.title}</p>
+          <p class="text text-message">${this.model.message}</p>
 
-        <button @click="${this.__handlers.open}">Open</button>
-        <button @click="${this.__handlers.dismiss}">Dismiss</button>
-        <input
-          type="text"
-          .value="${this.__value}"
-          @keyup="${this.__handlers.keyPress}"
-        >
+          <button @click="${this.__handlers.open}">Open</button>
+
+          <button
+            @click="${this.__handlers.clickDismissButton}"
+          >Dismiss</button>
+
+          <input
+            type="text"
+            .value="${this.__value}"
+            @keyup="${this.__handlers.keyPress}"
+          >
+        </div>
       </div>
     `
   }
