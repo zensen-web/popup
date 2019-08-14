@@ -47,7 +47,22 @@ class App extends LitElement {
       }
 
       .overlay-stack[visible] {
-        top: 4.2rem;
+        top: 4.8rem;
+      }
+
+      .button {
+        outline: none;
+        border: none;
+        background: transparent;
+        height: 2.4rem;
+      }
+
+      .button-overlay {
+        background-color: #77F;
+      }
+
+      .button-popup {
+        background-color: #7F7;
       }
     `
   }
@@ -75,8 +90,15 @@ class App extends LitElement {
   render () {
     return html`
       <div class="container">
-      <button @click="${this.__handlers.showOverlay}">Show Overlay</button>
-      <button @click="${this.__handlers.showPopup}">Show Popup</button>
+      <button
+        class="button button-overlay"
+        @click="${this.__handlers.showOverlay}"
+      >Show Overlay</button>
+
+      <button
+        class="button button-popup"
+        @click="${this.__handlers.showPopup}"
+      >Show Popup</button>
 
         <zen-popup-stack
           class="overlay-stack"
