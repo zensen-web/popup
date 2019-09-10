@@ -181,7 +181,6 @@ const result = await openPopup(POPUP_CONFIRM, {
 `openPopup()` returns a promise, so it can be `await`ed. It will resolve once the popup calls its `this.onClose()` callback. `openPopup()` will return whatever is passed into `this.onClose()`. In the case of our _Confirm Popup_, it will return `true` when the `Confirm` button is clicked, or `false` when the `Cancel` button is clicked.
 
 `openPopup()` returns a promise, so it can be `await`ed. It will resolve once the popup calls its `this.onClose()` callback. `openPopup()` will return whatever is passed into `this.onClose()`. In the case of our _Confirm Popup_, it will return `true` when the `Confirm` button is clicked, or `false` when the `Cancel` button is clicked.
-
 We can also manually remove the last popup from the stack like so:
 
 ```js
