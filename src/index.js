@@ -18,7 +18,7 @@ export function configure (store) {
 
 export function openPopup (popupArg) {
   return new Promise((resolve, reject) => {
-    const detail = {
+    let detail = {
       key: '',
       model: {},
       useBlocker: true,
@@ -29,9 +29,7 @@ export function openPopup (popupArg) {
     if (typeof popupArg === 'string') {
       detail.key = popupArg
     } else {
-      detail.key = popupArg.key
-      detail.model = popupArg.model
-      if ('useBlocker' in popupArg) detail.useBlocker = popupArg.useBlocker
+      detail = { ...detail, ...popupArg }
     }
 
     __store.dispatch(push(detail, popupArg.stack || 'main'))
