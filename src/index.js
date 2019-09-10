@@ -16,23 +16,16 @@ export function configure (store) {
   window.customElements.define('zen-popup-stack', component)
 }
 
-export function openPopup (popupArg) {
+export function openPopup (key, model = {}, stack = 'main') {
   return new Promise((resolve, reject) => {
-    let detail = {
-      key: '',
-      model: {},
-      useBlocker: true,
+    const detail = {
+      key,
+      model,
       dismiss: response =>
         (response instanceof Error ? reject(response) : resolve(response)),
     }
 
-    if (typeof popupArg === 'string') {
-      detail.key = popupArg
-    } else {
-      detail = { ...detail, ...popupArg }
-    }
-
-    __store.dispatch(push(detail, popupArg.stack || 'main'))
+    __store.dispatch(push(detail, stack))
   })
 }
 

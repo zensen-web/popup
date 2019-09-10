@@ -33,6 +33,10 @@ export function genComponent (store) {
           reflect: true,
           type: String,
         },
+        hideBlocker: {
+          reflect: true,
+          type: Boolean,
+        },
       }
     }
 
@@ -54,6 +58,11 @@ export function genComponent (store) {
           left: 0;
           right: 0;
           bottom: 0;
+        }
+
+        :host([hideBlocker]) {
+          position: unset;
+          background-color: transparent;
         }
 
         .container {
@@ -83,6 +92,7 @@ export function genComponent (store) {
       this.__stack = []
 
       this.key = 'main'
+      this.hideBlocker = false
       this.layout = ''
       this.renderers = {}
     }
@@ -172,7 +182,7 @@ export function genComponent (store) {
         const stack = this.__stack
         const oldStack = changedProps.get('__stack')
 
-        this.__restore = oldStack && stack.length && oldStack.length > stack.length
+        this.__restore = oldStack && oldStack.length > stack.length
       }
 
       if (this.__popupElem && this.__restore) {
@@ -185,36 +195,21 @@ export function genComponent (store) {
       }
     }
 
-    getPopupTemplate (item, renderer) {
-      return this.__canRender && renderer
-        ? renderer(this.layout, item.model, this.__handlers.close)
-        : ''
-    }
-
-    renderWithBlocker (popupTemplate) {
-      return html` 
-          <div id="${ID_BLOCKER}" class="container">
-            ${popupTemplate}
-          </div>`
-    }
-
-    renderPopup () {
+    render () {
       const item = this.getLastItem()
       const renderer = item ? this.renderers[item.key] : null
-
       if (item && !renderer) {
         item.dismiss(new Error('Invalid renderer:', item.key))
       }
 
-      const popupTemplate = this.getPopupTemplate(item, renderer)
-
-      return item.useBlocker ? this.renderWithBlocker(popupTemplate) : popupTemplate
-    }
-
-    render () {
+      const canRender = this.__canRender && renderer
       return this.__hasPopup || this.__open
-        ? this.renderPopup()
-        : ''
+        ? html`
+          <div id="${ID_BLOCKER}" class="container">
+            ${canRender ? renderer(this.layout, item.model, this.__handlers.close) : ''}
+          </div>
+        `
+        : html``
     }
   }
 }
