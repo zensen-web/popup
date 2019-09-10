@@ -210,7 +210,15 @@ import '@zensen/popup'
 
 By checking your `redux` state, you'll notice an array key under the popup reducer for each instance: `popups`, `overlays`, and `banners`. If a key isn't provided, then that instance's key defaults to `main`, so this works as well:
 
+If you want to render popups without the blocker, you can add the attribute `hideBlocker`:
+
 ```js
+import '@zensen/popup'
+
+<zen-popup-stack hideBlocker></zen-popup-stack>
+
+```js
+
 import '@zensen/popup'
 
 <zen-popup-stack></zen-popup-stack>                <!-- 'main'     -->

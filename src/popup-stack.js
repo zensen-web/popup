@@ -33,6 +33,10 @@ export function genComponent (store) {
           reflect: true,
           type: String,
         },
+        hideBlocker: {
+          reflect: true,
+          type: Boolean,
+        },
       }
     }
 
@@ -54,6 +58,11 @@ export function genComponent (store) {
           left: 0;
           right: 0;
           bottom: 0;
+        }
+
+        :host([hideBlocker]) {
+          position: unset;
+          background-color: transparent;
         }
 
         .container {
@@ -82,6 +91,7 @@ export function genComponent (store) {
       this.__popupElem = null
       this.__stack = []
 
+      this.hideBlocker = false
       this.key = 'main'
       this.layout = ''
       this.renderers = {}
