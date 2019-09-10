@@ -91,8 +91,8 @@ export function genComponent (store) {
       this.__popupElem = null
       this.__stack = []
 
-      this.key = 'main'
       this.hideBlocker = false
+      this.key = 'main'
       this.layout = ''
       this.renderers = {}
     }
