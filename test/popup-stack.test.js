@@ -11,7 +11,7 @@ import { ID_BLOCKER } from '../src/popup-stack'
 const KEY_MAIN = 'main'
 const KEY_NOTIFICATIONS = 'notifications'
 
-describe('index', () => {
+describe('popup-stack', () => {
   let sandbox
   let instance
   let dispatchSpy
@@ -51,6 +51,24 @@ describe('index', () => {
       expect(dispatchSpy.calledWith(unregister(KEY_NOTIFICATIONS))))
   })
 
+  context('when opening a popup without backdrop', () => {
+    let blocker
+
+    beforeEach(async () => {
+      instance.renderers = RENDERER_POPUPS
+      await instance.updateComplete
+
+      openPopup({ key: POPUP_MESSAGE, useBlocker: false })
+      await instance.updateComplete
+      await instance.updateComplete
+
+      blocker = instance.shadowRoot.getElementById(ID_BLOCKER)
+    })
+
+    it('does not render the backdrop', () =>
+      expect(blocker).to.not.exist)
+  })
+
   context('when opening a popup', () => {
     let popupElem
 
@@ -60,7 +78,7 @@ describe('index', () => {
       instance.renderers = RENDERER_POPUPS
       await instance.updateComplete
 
-      openPopup(POPUP_MESSAGE, STATE)
+      openPopup({ key: POPUP_MESSAGE, model: STATE })
       await instance.updateComplete
       await instance.updateComplete
 
@@ -103,7 +121,6 @@ describe('index', () => {
           popPopup()
           await instance.updateComplete
           await instance.updateComplete
-
           const blocker = instance.shadowRoot.getElementById(ID_BLOCKER)
           popupElem = blocker.firstElementChild
         })

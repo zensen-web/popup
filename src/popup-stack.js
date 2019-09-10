@@ -172,7 +172,7 @@ export function genComponent (store) {
         const stack = this.__stack
         const oldStack = changedProps.get('__stack')
 
-        this.__restore = oldStack && oldStack.length > stack.length
+        this.__restore = oldStack && stack.length && oldStack.length > stack.length
       }
 
       if (this.__popupElem && this.__restore) {
@@ -185,21 +185,36 @@ export function genComponent (store) {
       }
     }
 
-    render () {
+    getPopupTemplate (item, renderer) {
+      return this.__canRender && renderer
+        ? renderer(this.layout, item.model, this.__handlers.close)
+        : ''
+    }
+
+    renderWithBlocker (popupTemplate) {
+      return html` 
+          <div id="${ID_BLOCKER}" class="container">
+            ${popupTemplate}
+          </div>`
+    }
+
+    renderPopup () {
       const item = this.getLastItem()
       const renderer = item ? this.renderers[item.key] : null
+
       if (item && !renderer) {
         item.dismiss(new Error('Invalid renderer:', item.key))
       }
 
-      const canRender = this.__canRender && renderer
+      const popupTemplate = this.getPopupTemplate(item, renderer)
+
+      return item.useBlocker ? this.renderWithBlocker(popupTemplate) : popupTemplate
+    }
+
+    render () {
       return this.__hasPopup || this.__open
-        ? html`
-          <div id="${ID_BLOCKER}" class="container">
-            ${canRender ? renderer(this.layout, item.model, this.__handlers.close) : ''}
-          </div>
-        `
-        : html``
+        ? this.renderPopup()
+        : ''
     }
   }
 }

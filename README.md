@@ -169,13 +169,47 @@ window.customElements.define('x-app', App)
 
 We can open popups like so:
 
+We can pass just the popupKey:
+
 ```js
 import { openPopup } from '@zensen/popup'
 
-const result = await openPopup(POPUP_CONFIRM, {
-  title: 'Welcome',
-  message: 'Would you like some annoying emails?',
-})
+const result = await openPopup(POPUP_CONFIRM);
+
+if (result) {
+  // do something 
+} else {
+  // do something else
+}
+```
+or if we need to pass data to the popup, we can pass an object:
+
+```js
+import { openPopup } from '@zensen/popup'
+
+const result = await openPopup(
+  { key: POPUP_CONFIRM, 
+    model: {
+      title: 'Welcome',
+      message: 'Would you like some annoying emails?',
+    },
+  },
+);
+```
+If a popup needs to be rendered without the backdrop blocker, we can pass an optional flag to hide the blocker:
+
+```js
+import { openPopup } from '@zensen/popup'
+
+const result = await openPopup(
+  { key: POPUP_CONFIRM, 
+    model: {
+      title: 'Welcome',
+      message: 'Would you like some annoying emails?',
+    },
+    useBlocker: false,
+  },
+);
 ```
 
 `openPopup()` returns a promise, so it can be `await`ed. It will resolve once the popup calls its `this.onClose()` callback. `openPopup()` will return whatever is passed into `this.onClose()`. In the case of our _Confirm Popup_, it will return `true` when the `Confirm` button is clicked, or `false` when the `Cancel` button is clicked.
