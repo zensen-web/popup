@@ -36,6 +36,7 @@ export function genComponent (store) {
         hideBlocker: {
           reflect: true,
           type: Boolean,
+          attribute: 'hideblocker',
         },
       }
     }
@@ -60,9 +61,8 @@ export function genComponent (store) {
           bottom: 0;
         }
 
-        :host([hideBlocker]) {
+        :host([hideblocker]) {
           position: unset;
-          background-color: transparent;
         }
 
         .container {
