@@ -9,8 +9,9 @@ export const POPUP_MESSAGE = 'message'
 export const POPUP_RESULT = 'asdf'
 
 export const RENDERER_POPUPS = {
-  [POPUP_MESSAGE]: (hide, layout, model, closeHandler) => html`
+  [POPUP_MESSAGE]: (hide, index, layout, model, closeHandler) => html`
     <x-popup-test
+      .index="${index}"
       .layout="${layout}"
       .model="${model}"
       .onClose="${closeHandler}"

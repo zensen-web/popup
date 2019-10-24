@@ -6,16 +6,18 @@ import { LitElement, html, css } from 'lit-element'
 import { openPopup } from '../../../src'
 
 export const RENDERER_POPUPS = {
-  message: (hide, layout, model, closeHandler) => html`
+  message: (hide, index, layout, model, closeHandler) => html`
     <x-popup-message
+      .index="${index}"
       .layout="${layout}"
       .model="${model}"
       .onClose="${closeHandler}"
       ?hidden="${hide}"
     ></x-popup-message>
   `,
-  overlay: (hide, layout, model, closeHandler) => html`
+  overlay: (hide, index, layout, model, closeHandler) => html`
     <x-overlay
+      .index="${index}"
       .layout="${layout}"
       .model="${model}"
       .onClose="${closeHandler}"

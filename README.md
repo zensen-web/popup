@@ -105,8 +105,9 @@ The next step is to create a map of popup renderer functions that will be used t
 export const POPUP_CONFIRM = 'confirm'
 
 export const RENDERER_POPUPS = {
-  [POPUP_CONFIRM]: (hide, layout, model, closeHandler) => html`
+  [POPUP_CONFIRM]: (hide, index, layout, model, closeHandler) => html`
     <x-popup-confirm
+      .index="${index}"
       .layout="${layout}"
       .model="${model}"
       .onClose="${closeHandler}"

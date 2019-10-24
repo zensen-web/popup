@@ -173,7 +173,7 @@ export function genComponent (store) {
         item.dismiss(new Error('Invalid popup key:', item.key))
       }
 
-      return renderer(hide, this.layout, item.model, this.__handlers.close)
+      return renderer(hide, index, this.layout, item.model, this.__handlers.close)
     }
 
     render () {
