@@ -3,7 +3,6 @@ import { expect } from '@open-wc/testing'
 import {
   register,
   unregister,
-  freeze,
   push,
   pop,
   clear,
@@ -38,55 +37,6 @@ describe('reducer', () => {
         unregister('overlay'),
       ),
     ).to.eql({ main: [] })
-  )
-
-  it('freezes the popup', () =>
-    expect(
-      reducer(
-        {
-          main: [
-            {
-              model: { a: 10 },
-            },
-            {
-              model: { b: 12 },
-            },
-          ],
-        },
-        freeze({ name: 'Beethoven' }, 'main'),
-      ),
-    ).to.eql({
-      main: [
-        {
-          model: { a: 10 },
-          state: { name: 'Beethoven' },
-        },
-        {
-          model: { b: 12 },
-        },
-      ],
-    })
-  )
-
-  it('does not freeze anything when there is only a single popup', () =>
-    expect(
-      reducer(
-        {
-          main: [
-            {
-              model: { a: 10 },
-            },
-          ],
-        },
-        freeze({ name: 'Beethoven' }, 'main'),
-      ),
-    ).to.eql({
-      main: [
-        {
-          model: { a: 10 },
-        },
-      ],
-    })
   )
 
   it('pushes a popup onto the stack', () =>

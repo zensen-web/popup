@@ -7,6 +7,8 @@ import { openPopup } from '../../../src'
 class MessagePopup extends Popup {
   static get properties () {
     return {
+      __value: String,
+      __result: String,
       __transition: {
         reflect: true,
         type: Boolean,
@@ -27,14 +29,13 @@ class MessagePopup extends Popup {
 
         :host {
           width: 28rem;
-          height: 8rem;
           opacity: 0;
           background-color: #FFF;
           transform: translateY(-2.4rem);
           transition: all 200ms ease-out;
         }
 
-        :host([transition]) {
+        :host([transition][active]) {
           opacity: 1;
           transform: translateX(0);
         }
@@ -64,12 +65,18 @@ class MessagePopup extends Popup {
     }
 
     this.__transition = false
+    this.__result = ''
+    this.__value = ''
+
     this.__handlers = {
+      change: e => (this.__value = e.currentTarget.value),
       close: () => (this.__transition = false),
-      open: () => openPopup('message', {
-        title: 'Sub-Menu',
-        message: 'Some more stuff',
-      }),
+      open: async () => {
+        this.__result = await openPopup('message', {
+          title: 'Sub-Menu',
+          message: 'Some more stuff',
+        })
+      },
     }
   }
 
@@ -78,9 +85,17 @@ class MessagePopup extends Popup {
 
     this.addEventListener('transitionend', e => {
       if (e.propertyName === 'transform' && !this.__transition) {
-        this.onClose()
+        this.onClose(this.__value)
       }
     })
+  }
+
+  activate () {
+    console.info('activate()')
+  }
+
+  deactivate () {
+    console.info('deactivate()')
   }
 
   firstUpdated () {
@@ -93,6 +108,14 @@ class MessagePopup extends Popup {
     return html`
       <p class="text text-title">${this.model.title}</p>
       <p class="text text-message">${this.model.message}</p>
+      <p>Result: ${this.__result ? this.__result : 'N/A'}</p>
+
+      <div>
+        <input
+          .value="${this.__value}"
+          @input="${this.__handlers.change}"
+        />
+      </div>
 
       <button @click="${this.__handlers.open}">Open</button>
       <button @click="${this.__handlers.close}">Close</button>

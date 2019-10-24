@@ -6,18 +6,20 @@ import { LitElement, html, css } from 'lit-element'
 import { openPopup } from '../../../src'
 
 export const RENDERER_POPUPS = {
-  message: (layout, model, closeHandler) => html`
+  message: (hide, layout, model, closeHandler) => html`
     <x-popup-message
       .layout="${layout}"
       .model="${model}"
       .onClose="${closeHandler}"
+      ?hidden="${hide}"
     ></x-popup-message>
   `,
-  overlay: (layout, model, closeHandler) => html`
+  overlay: (hide, layout, model, closeHandler) => html`
     <x-overlay
       .layout="${layout}"
       .model="${model}"
       .onClose="${closeHandler}"
+      ?hidden="${hide}"
     ></x-overlay>
 `,
 }
@@ -90,15 +92,15 @@ class App extends LitElement {
   render () {
     return html`
       <div class="container">
-      <button
-        class="button button-overlay"
-        @click="${this.__handlers.showOverlay}"
-      >Show Overlay</button>
+        <button
+          class="button button-popup"
+          @click="${this.__handlers.showPopup}"
+        >Show Popup</button>
 
-      <button
-        class="button button-popup"
-        @click="${this.__handlers.showPopup}"
-      >Show Popup</button>
+        <button
+          class="button button-overlay"
+          @click="${this.__handlers.showOverlay}"
+        >Show Overlay</button>
 
         <zen-popup-stack
           class="overlay-stack"

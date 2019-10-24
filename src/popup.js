@@ -3,7 +3,17 @@ import { LitElement, css } from 'lit-element'
 export class Popup extends LitElement {
   static get properties () {
     return {
+      __activated: {
+        reflect: true,
+        type: Boolean,
+        attribute: 'active',
+      },
+
       model: Object,
+      hidden: {
+        reflect: true,
+        type: Boolean,
+      },
       layout: {
         reflect: true,
         type: String,
@@ -18,24 +28,42 @@ export class Popup extends LitElement {
           display: inline-block;
           outline: none;
         }
+
+        :host([hidden]) {
+          display: none;
+        }
       `,
     ]
   }
 
+  activate () {}
+  deactivate () {}
+
   constructor () {
     super()
 
+    this.hidden = false
     this.layout = ''
     this.model = {}
 
     this.onClose = () => {}
   }
 
-  freeze () { /* return state to free */ }
-  restore (_state) {}
-
   firstUpdated () {
     this.setAttribute('tabindex', '-1')
     this.focus()
+  }
+
+  update (changedProps) {
+    if (changedProps.has('hidden')) {
+      this.__activated = !this.hidden
+      if (this.__activated) {
+        this.activate()
+      } else {
+        this.deactivate()
+      }
+    }
+
+    super.update(changedProps)
   }
 }

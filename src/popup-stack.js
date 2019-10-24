@@ -1,15 +1,16 @@
 import { connect } from 'pwa-helpers'
 import { LitElement, html, css } from 'lit-element'
 
-import { register, unregister, pop, freeze } from './redux'
+import { register, unregister, pop } from './redux'
 
 export const ID_BLOCKER = 'blocker'
+
+export const CSS_NONE = css`display: none;`
 
 export function genComponent (store) {
   return class extends connect(store)(LitElement) {
     static get properties () {
       return {
-        __canRender: Boolean,
         __stack: Array,
         __open: {
           reflect: true,
@@ -84,11 +85,8 @@ export function genComponent (store) {
 
     __initState () {
       this.__open = false
-      this.__restore = false
       this.__visible = false
       this.__hasPopup = false
-      this.__canRender = true
-      this.__popupElem = null
       this.__stack = []
 
       this.hideBlocker = false
@@ -101,9 +99,7 @@ export function genComponent (store) {
       this.__handlers = {
         close: result => {
           const item = this.getLastItem()
-          if (item && item.dismiss) {
-            item.dismiss(result)
-          }
+          item.dismiss(result)
 
           store.dispatch(pop(this.key))
         },
@@ -113,9 +109,8 @@ export function genComponent (store) {
     connectedCallback () {
       super.connectedCallback()
 
-      this.addEventListener('transitionend', () => {
-        this.__open = Boolean(this.__stack.length)
-      })
+      this.addEventListener('transitionend', () =>
+        (this.__open = Boolean(this.__stack.length)))
     }
 
     disconnectedCallback () {
@@ -136,7 +131,7 @@ export function genComponent (store) {
         : null
     }
 
-    updateKey (changedProps) {
+    __updateKey (changedProps) {
       const oldKey = changedProps.get('key')
       if (oldKey) {
         store.dispatch(unregister(oldKey))
@@ -147,26 +142,13 @@ export function genComponent (store) {
       }
     }
 
-    updateStack (changedProps) {
-      this.__canRender = false
-      this.__hasPopup = Boolean(this.__stack.length)
-
-      const stackLength = this.__stack.length
-      const oldStack = changedProps.get('__stack')
-
-      if (this.__popupElem && oldStack && oldStack.length < stackLength) {
-        const state = this.__popupElem.freeze()
-        store.dispatch(freeze(state, this.key))
-      }
-    }
-
     update (changedProps) {
       if (changedProps.has('key')) {
-        this.updateKey(changedProps)
+        this.__updateKey(changedProps)
       }
 
       if (changedProps.has('__stack')) {
-        this.updateStack(changedProps)
+        this.__hasPopup = this.__stack.length > 0
       }
 
       this.__visible = this.__hasPopup || this.__open
@@ -174,42 +156,32 @@ export function genComponent (store) {
     }
 
     updated (changedProps) {
-      const blockerElem = this.shadowRoot.getElementById(ID_BLOCKER)
-      this.__popupElem = blockerElem ? blockerElem.firstElementChild : null
-      this.__canRender = true
-
       if (changedProps.has('__stack')) {
         const stack = this.__stack
         const oldStack = changedProps.get('__stack')
 
         this.__restore = oldStack && oldStack.length > stack.length
       }
+    }
 
-      if (this.__popupElem && this.__restore) {
-        const lastItem = this.__stack[this.__stack.length - 1]
-        if (lastItem.state) {
-          this.__popupElem.restore({ ...lastItem.state })
-        }
+    __renderItem (item, index) {
+      const last = index === this.__stack.length - 1
+      const hide = this.__stack.length > 1 && !last
+      const renderer = this.renderers[item.key]
 
-        this.__restore = false
+      if (!renderer) {
+        item.dismiss(new Error('Invalid popup key:', item.key))
       }
+
+      return renderer(hide, this.layout, item.model, this.__handlers.close)
     }
 
     render () {
-      const item = this.getLastItem()
-      const renderer = item ? this.renderers[item.key] : null
-      if (item && !renderer) {
-        item.dismiss(new Error('Invalid renderer:', item.key))
-      }
-
-      const canRender = this.__canRender && renderer
-      return this.__hasPopup || this.__open
-        ? html`
-          <div id="${ID_BLOCKER}" class="container">
-            ${canRender ? renderer(this.layout, item.model, this.__handlers.close) : ''}
-          </div>
-        `
-        : html``
+      return html`
+        <div id="${ID_BLOCKER}" class="container">
+          ${this.__stack.map((item, index) => this.__renderItem(item, index))}
+        </div>
+      `
     }
   }
 }

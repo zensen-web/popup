@@ -4,23 +4,25 @@ import store from './utils/store'
 import { fixture, html, expect } from '@open-wc/testing'
 
 import { openPopup, popPopup } from '../src'
-import { register, unregister, freeze } from '../src/redux'
+import { register, unregister } from '../src/redux'
 import { POPUP_MESSAGE, RENDERER_POPUPS } from './utils/popup'
 import { ID_BLOCKER } from '../src/popup-stack'
 
 const KEY_MAIN = 'main'
 const KEY_NOTIFICATIONS = 'notifications'
 
-describe('index', () => {
+describe('popup-stack', () => {
   let sandbox
   let instance
   let dispatchSpy
+  let blockerElem
 
   beforeEach(async () => {
     sandbox = sinon.createSandbox()
     dispatchSpy = sandbox.spy(store, 'dispatch')
 
     instance = await fixture(html`<zen-popup-stack></zen-popup-stack>`)
+    blockerElem = instance.shadowRoot.getElementById(ID_BLOCKER)
   })
 
   afterEach(() => {
@@ -54,24 +56,22 @@ describe('index', () => {
   context('when opening a popup', () => {
     let popupElem
 
-    const STATE = { message: 'state pushed' }
+    const MODEL = { message: 'state pushed' }
 
     beforeEach(async () => {
       instance.renderers = RENDERER_POPUPS
       await instance.updateComplete
 
-      openPopup(POPUP_MESSAGE, STATE)
-      await instance.updateComplete
+      openPopup(POPUP_MESSAGE, MODEL)
       await instance.updateComplete
 
-      const blocker = instance.shadowRoot.getElementById(ID_BLOCKER)
-      popupElem = blocker.firstElementChild
+      popupElem = blockerElem.firstElementChild
     })
 
     it('has popups', () => expect(instance.getAttribute('haspopup')).to.exist)
 
     it('passes model data to the popup', () =>
-      expect(popupElem.model).to.eql(STATE))
+      expect(popupElem.model).to.eql(MODEL))
 
     context('when dismissing the popup', () => {
       let dismissStub
@@ -95,21 +95,17 @@ describe('index', () => {
         await instance.updateComplete
       })
 
-      it('previous popup state is frozen', () =>
-        expect(dispatchSpy.calledWithMatch(freeze)).to.be.true)
+      it('has two popups', () =>
+        expect(blockerElem.childElementCount).to.be.eq(2))
 
       context('when popup is popped from the stack', () => {
         beforeEach(async () => {
           popPopup()
           await instance.updateComplete
-          await instance.updateComplete
-
-          const blocker = instance.shadowRoot.getElementById(ID_BLOCKER)
-          popupElem = blocker.firstElementChild
         })
 
-        it('restores state to the previous popup', () =>
-          expect(popupElem.restore.calledWith(STATE)).to.be.true)
+        it('has two popups', () =>
+          expect(blockerElem.childElementCount).to.be.eq(1))
       })
     })
   })

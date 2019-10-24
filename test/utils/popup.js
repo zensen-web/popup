@@ -1,5 +1,3 @@
-import sinon from 'sinon'
-
 import { html } from 'lit-element'
 
 import { Popup } from '../../src/popup'
@@ -11,11 +9,12 @@ export const POPUP_MESSAGE = 'message'
 export const POPUP_RESULT = 'asdf'
 
 export const RENDERER_POPUPS = {
-  [POPUP_MESSAGE]: (layout, model, closeHandler) => html`
+  [POPUP_MESSAGE]: (hide, layout, model, closeHandler) => html`
     <x-popup-test
       .layout="${layout}"
       .model="${model}"
       .onClose="${closeHandler}"
+      ?hidden="${hide}"
     ></x-popup-test>
   `,
 }
@@ -30,8 +29,6 @@ class TestPopup extends Popup {
   constructor () {
     super()
 
-    this.restore = sinon.stub()
-
     this.__state = {
       a: 123,
     }
@@ -40,10 +37,6 @@ class TestPopup extends Popup {
       close: () => this.onClose(),
       save: () => this.onClose(POPUP_RESULT),
     }
-  }
-
-  freeze () {
-    return this.__state
   }
 
   update (changedProps) {
