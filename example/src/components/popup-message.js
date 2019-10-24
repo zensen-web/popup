@@ -90,12 +90,12 @@ class MessagePopup extends Popup {
     })
   }
 
-  activate () {
-    console.info('activate()')
+  reactivated () {
+    console.info('reactivated()')
   }
 
-  deactivate () {
-    console.info('deactivate()')
+  deactivated () {
+    console.info('deactivated()')
   }
 
   firstUpdated () {

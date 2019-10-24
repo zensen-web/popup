@@ -36,8 +36,8 @@ export class Popup extends LitElement {
     ]
   }
 
-  activate () {}
-  deactivate () {}
+  reactivated () {}
+  deactivated () {}
 
   constructor () {
     super()
@@ -57,10 +57,11 @@ export class Popup extends LitElement {
   update (changedProps) {
     if (changedProps.has('hidden')) {
       this.__activated = !this.hidden
+
       if (this.__activated) {
-        this.activate()
+        this.reactivated()
       } else {
-        this.deactivate()
+        this.deactivated()
       }
     }
 
