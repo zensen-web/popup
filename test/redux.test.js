@@ -9,6 +9,8 @@ import {
   reducer,
 } from '../src/redux'
 
+const DISMISS_FN = () => {}
+
 describe('reducer', () => {
   it('initialize', () => expect(reducer(undefined, {})).to.eql({}))
 
@@ -49,7 +51,7 @@ describe('reducer', () => {
             },
           ],
         },
-        push({ model: { b: 12 } }, 'main'),
+        push('main', { model: { b: 12 } }),
       ),
     ).to.eql({
       main: [
@@ -70,9 +72,11 @@ describe('reducer', () => {
           main: [
             {
               model: { a: 10 },
+              dismiss: DISMISS_FN,
             },
             {
               model: { b: 12 },
+              dismiss: DISMISS_FN,
             },
           ],
         },
@@ -82,6 +86,7 @@ describe('reducer', () => {
       main: [
         {
           model: { a: 10 },
+          dismiss: DISMISS_FN,
         },
       ],
     })
@@ -92,11 +97,14 @@ describe('reducer', () => {
       reducer(
         {
           main: [
-            { model: {} },
-            { model: {} },
-            { model: {} },
-            { model: {} },
-            { model: {} },
+            {
+              model: {},
+              dismiss: DISMISS_FN,
+            },
+            {
+              model: {},
+              dismiss: DISMISS_FN,
+            },
           ],
         },
         clear('main'),

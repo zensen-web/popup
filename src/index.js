@@ -25,7 +25,7 @@ export function openPopup (key, model = {}, stack = 'main') {
         (response instanceof Error ? reject(response) : resolve(response)),
     }
 
-    __store.dispatch(push(detail, stack))
+    __store.dispatch(push(stack, detail))
   })
 }
 

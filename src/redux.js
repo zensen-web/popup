@@ -18,16 +18,16 @@ export function unregister (key) {
   }
 }
 
-export function push (detail, key) {
+export function push (key, detail) {
   return {
     type: POPUP_PUSH,
-    detail,
     key,
+    detail,
   }
 }
 
-export function pop (key) {
-  return { type: POPUP_POP, key }
+export function pop (key, result) {
+  return { type: POPUP_POP, key, result }
 }
 
 export function clear (key) {
@@ -61,12 +61,18 @@ export function reducer (state = {}, action) {
       }
 
     case POPUP_POP:
+      const stack = state[action.key]
+      const item = stack[stack.length - 1]
+      item.dismiss(action.result)
+
       return {
         ...state,
         [action.key]: state[action.key].slice(0, -1),
       }
 
     case POPUP_CLEAR:
+      state[action.key].forEach(item => item.dismiss())
+
       return {
         ...state,
         [action.key]: [],

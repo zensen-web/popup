@@ -97,12 +97,7 @@ export function genComponent (store) {
 
     __initHandlers () {
       this.__handlers = {
-        close: result => {
-          const item = this.getLastItem()
-          item.dismiss(result)
-
-          store.dispatch(pop(this.key))
-        },
+        close: result => store.dispatch(pop(this.key, result)),
       }
     }
 
@@ -125,26 +120,16 @@ export function genComponent (store) {
       this.__stack = state.popup[this.key] || []
     }
 
-    getLastItem () {
-      return this.__stack.length > 0
-        ? this.__stack[this.__stack.length - 1]
-        : null
-    }
-
-    __updateKey (changedProps) {
-      const oldKey = changedProps.get('key')
-      if (oldKey) {
-        store.dispatch(unregister(oldKey))
-      }
-
-      if (this.key) {
-        store.dispatch(register(this.key))
-      }
-    }
-
     update (changedProps) {
       if (changedProps.has('key')) {
-        this.__updateKey(changedProps)
+        const oldKey = changedProps.get('key')
+        if (oldKey) {
+          store.dispatch(unregister(oldKey))
+        }
+
+        if (this.key) {
+          store.dispatch(register(this.key))
+        }
       }
 
       if (changedProps.has('__stack')) {
