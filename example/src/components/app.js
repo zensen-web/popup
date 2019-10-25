@@ -27,6 +27,12 @@ export const RENDERER_POPUPS = {
 }
 
 class App extends LitElement {
+  static get properties () {
+    return {
+      __result: String,
+    }
+  }
+
   static get styles () {
     return css`
       *,
@@ -73,7 +79,10 @@ class App extends LitElement {
 
   constructor () {
     super()
+
     this.__initHandlers()
+
+    this.__result = ''
   }
 
   __initHandlers () {
@@ -83,11 +92,11 @@ class App extends LitElement {
           title: 'Overlay',
           message: 'This is in the overlay stack',
         }, 'overlay'),
-      showPopup: () =>
-        openPopup('message', {
+      showPopup: async () =>
+        (this.__result = await openPopup('message', {
           title: 'Hello',
           message: 'Welcome to this app!',
-        }),
+        })),
     }
   }
 
@@ -109,6 +118,8 @@ class App extends LitElement {
           key="overlay"
           .renderers="${RENDERER_POPUPS}"
         ></zen-popup-stack>
+
+        <p>${this.__result}</p>
 
         <zen-popup-stack .renderers="${RENDERER_POPUPS}"></zen-popup-stack>
       </div>
