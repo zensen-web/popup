@@ -14,6 +14,10 @@ export class Popup extends LitElement {
         reflect: true,
         type: Boolean,
       },
+      index: {
+        reflect: true,
+        type: Boolean,
+      },
       layout: {
         reflect: true,
         type: String,
@@ -43,6 +47,7 @@ export class Popup extends LitElement {
     super()
 
     this.hidden = false
+    this.index = -1
     this.layout = ''
     this.model = {}
 
