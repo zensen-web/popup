@@ -16,7 +16,7 @@ export class Popup extends LitElement {
       },
       index: {
         reflect: true,
-        type: Boolean,
+        type: Number,
       },
       layout: {
         reflect: true,
