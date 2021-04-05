@@ -52,7 +52,7 @@ export function genComponent (store) {
         }
 
         :host([haspopup]) {
-          background-color: rgba(0, 0, 0, 0.5);
+          /* background-color: rgba(0, 0, 0, 0.5); */
         }
 
         :host([visible]) {
@@ -70,8 +70,19 @@ export function genComponent (store) {
           display: flex;
           align-items: center;
           justify-content: center;
+          /* background-color: transparent; */
+          background-color: rgba(0, 0, 0, 0.5);
+          /* width: 100%; */
+          /* height: 100%; */
+          grid-area: 1 / 1 / 2 / 2;
+        }
+
+        .container[hide] {
           background-color: transparent;
-          width: 100%;
+        }
+
+        .thing {
+          display: grid;
           height: 100%;
         }
       `
@@ -158,12 +169,22 @@ export function genComponent (store) {
         item.dismiss(new Error('Invalid popup key:', item.key))
       }
 
-      return renderer(hide, index, this.layout, item.model, this.__handlers.close)
+      return html`
+        <div id="${ID_BLOCKER}${index}" style="z-index: ${index}" class="container" ?hide="${hide}">
+          ${renderer(false, index, this.layout, item.model, this.__handlers.close)}
+        </div>
+      `
     }
 
     render () {
+      // return html`
+      //   <div id="${ID_BLOCKER}" class="container">
+      //     ${this.__stack.map((item, index) => this.__renderItem(item, index))}
+      //   </div>
+      // `
+      //
       return html`
-        <div id="${ID_BLOCKER}" class="container">
+        <div class="thing">
           ${this.__stack.map((item, index) => this.__renderItem(item, index))}
         </div>
       `
