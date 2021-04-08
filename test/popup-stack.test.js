@@ -6,7 +6,6 @@ import { fixture, html, expect } from '@open-wc/testing'
 import { openPopup, popPopup } from '../src'
 import { register, unregister } from '../src/redux'
 import { POPUP_MESSAGE, RENDERER_POPUPS } from './utils/popup'
-import { ID_BLOCKER } from '../src/popup-stack'
 
 const KEY_MAIN = 'main'
 const KEY_NOTIFICATIONS = 'notifications'
@@ -15,14 +14,17 @@ describe('popup-stack', () => {
   let sandbox
   let instance
   let dispatchSpy
-  let blockerElem
+  let blockers
+
+  const getBlockerElements = () => instance.shadowRoot.querySelectorAll('.blocker')
 
   beforeEach(async () => {
     sandbox = sinon.createSandbox()
     dispatchSpy = sandbox.spy(store, 'dispatch')
 
     instance = await fixture(html`<zen-popup-stack></zen-popup-stack>`)
-    blockerElem = instance.shadowRoot.getElementById(ID_BLOCKER)
+
+    return instance.updateComplete
   })
 
   afterEach(() => {
@@ -65,10 +67,9 @@ describe('popup-stack', () => {
       openPopup(POPUP_MESSAGE, MODEL)
       await instance.updateComplete
 
-      popupElem = blockerElem.firstElementChild
+      blockers = getBlockerElements()
+      popupElem = blockers[0].firstElementChild
     })
-
-    it('has popups', () => expect(instance.getAttribute('haspopup')).to.exist)
 
     it('passes model data to the popup', () =>
       expect(popupElem.model).to.eql(MODEL))
@@ -80,10 +81,11 @@ describe('popup-stack', () => {
         dismissStub = sandbox.stub(instance.__stack[0], 'dismiss')
         popupElem.__handlers.close()
         await instance.updateComplete
+        blockers = getBlockerElements()
       })
 
-      it('does not have popups',
-        () => expect(instance.getAttribute('haspopup')).to.not.exist)
+      it('does not render any blockers', () =>
+        expect(blockers).to.be.empty)
 
       it('dismisses the popup', () =>
         expect(dismissStub.calledOnce).to.be.true)
@@ -93,19 +95,29 @@ describe('popup-stack', () => {
       beforeEach(async () => {
         openPopup(POPUP_MESSAGE)
         await instance.updateComplete
+        blockers = getBlockerElements()
       })
 
       it('has two popups', () =>
-        expect(blockerElem.childElementCount).to.be.eq(2))
+        expect(blockers.length).to.be.eq(2))
+
+      it('hides the first blocker', () =>
+        expect(blockers[0].hasAttribute('hide')).to.be.true
+      )
+
+      it('shows the second blocker', () =>
+        expect(blockers[1].hasAttribute('hide')).to.be.false
+      )
 
       context('when popup is popped from the stack', () => {
         beforeEach(async () => {
           popPopup()
           await instance.updateComplete
+          blockers = getBlockerElements()
         })
 
-        it('has two popups', () =>
-          expect(blockerElem.childElementCount).to.be.eq(1))
+        it('has one popup', () =>
+          expect(blockers.length).to.be.eq(1))
       })
     })
   })
