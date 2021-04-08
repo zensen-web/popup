@@ -49,10 +49,7 @@ export function genComponent (store) {
           position: absolute;
           background-color: rgba(0, 0, 0, 0.0);
           transition: background-color 200ms ease-in;
-        }
-
-        :host([haspopup]) {
-          /* background-color: rgba(0, 0, 0, 0.5); */
+          --backdrop-color: rgba(0, 0, 0, 0.5)
         }
 
         :host([visible]) {
@@ -67,13 +64,15 @@ export function genComponent (store) {
         }
 
         .container {
+          display: grid;
+          height: 100%;
+        }
+
+        .blocker {
           display: flex;
           align-items: center;
           justify-content: center;
-          /* background-color: transparent; */
-          background-color: rgba(0, 0, 0, 0.5);
-          /* width: 100%; */
-          /* height: 100%; */
+          background-color: var(--backdrop-color);
           grid-area: 1 / 1 / 2 / 2;
         }
 
@@ -81,11 +80,7 @@ export function genComponent (store) {
           background-color: transparent;
         }
 
-        .thing {
-          display: grid;
-          height: 100%;
-        }
-      `
+              `
     }
 
     constructor () {
@@ -170,21 +165,15 @@ export function genComponent (store) {
       }
 
       return html`
-        <div id="${ID_BLOCKER}${index}" style="z-index: ${index}" class="container" ?hide="${hide}">
+        <div id="${ID_BLOCKER}${index}" style="z-index: ${index}" class="blocker" ?hide="${hide}">
           ${renderer(false, index, this.layout, item.model, this.__handlers.close)}
         </div>
       `
     }
 
     render () {
-      // return html`
-      //   <div id="${ID_BLOCKER}" class="container">
-      //     ${this.__stack.map((item, index) => this.__renderItem(item, index))}
-      //   </div>
-      // `
-      //
       return html`
-        <div class="thing">
+        <div class="container">
           ${this.__stack.map((item, index) => this.__renderItem(item, index))}
         </div>
       `
