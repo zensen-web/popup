@@ -218,6 +218,23 @@ If you want to render popups without the blocker, you can add the attribute `hid
 import '@zensen/popup'
 
 <zen-popup-stack hideBlocker></zen-popup-stack>
+```
+
+If you want to change the color of the blocker itself, you can attach a class to the popup stack and manipulate the `--backdrop-color` variable as needed:
+
+```js
+import '@zensen/popup'
+
+static get styles() {
+  return css`
+    .popup-stack {
+      --backdrop-color: blue;
+    }
+  `
+}
+
+<zen-popup-stack class="popup-stack"></zen-popup-stack>
+```
 
 ```js
 

@@ -34,7 +34,7 @@ describe('popup-stack', () => {
   it('renders', () => expect(instance).to.exist)
 
   it('does not have popups',
-    () => expect(instance.getAttribute('haspopup')).to.not.exist)
+    () => expect(getBlockerElements()).to.be.empty)
 
   it('registers a reducer', () =>
     expect(dispatchSpy.calledWith(register(KEY_MAIN))).to.be.true)
