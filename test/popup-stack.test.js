@@ -10,7 +10,7 @@ import { POPUP_MESSAGE, RENDERER_POPUPS } from './utils/popup'
 const KEY_MAIN = 'main'
 const KEY_NOTIFICATIONS = 'notifications'
 
-describe('popup-stack', () => {
+describe.only('popup-stack', () => {
   let sandbox
   let instance
   let dispatchSpy
@@ -74,6 +74,10 @@ describe('popup-stack', () => {
     it('passes model data to the popup', () =>
       expect(popupElem.model).to.eql(MODEL))
 
+    it('has open attribute', () =>
+      expect(instance.hasAttribute('open')).to.be.true
+    )
+
     context('when dismissing the popup', () => {
       let dismissStub
 
@@ -89,6 +93,10 @@ describe('popup-stack', () => {
 
       it('dismisses the popup', () =>
         expect(dismissStub.calledOnce).to.be.true)
+
+      it('removes open attribute', () =>
+        expect(instance.hasAttribute('open')).to.be.false
+      )
     })
 
     context('when another popup is pushed onto the stack', () => {

@@ -64,7 +64,7 @@ export function genComponent (store) {
           grid-area: 1 / 1 / 2 / 2;
         }
 
-        .container[hide] {
+        .blocker[hide] {
           background-color: transparent;
         }
       `
@@ -121,6 +121,10 @@ export function genComponent (store) {
         if (this.key) {
           store.dispatch(register(this.key))
         }
+      }
+
+      if (changedProps.has('__stack')) {
+        this.__open = this.__stack.length > 0
       }
 
       super.update(changedProps)
