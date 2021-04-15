@@ -212,13 +212,6 @@ import '@zensen/popup'
 
 By checking your `redux` state, you'll notice an array key under the popup reducer for each instance: `popups`, `overlays`, and `banners`. If a key isn't provided, then that instance's key defaults to `main`, so this works as well:
 
-If you want to render popups without the blocker, you can add the attribute `hideBlocker`:
-
-```js
-import '@zensen/popup'
-
-<zen-popup-stack hideBlocker></zen-popup-stack>
-
 ```js
 
 import '@zensen/popup'
@@ -230,3 +223,27 @@ import '@zensen/popup'
 ```
 
 This can be useful for apps that need multiple stacks for diverse roles.
+
+If you want to render popups without the blocker, you can add the attribute `hideBlocker`:
+
+```js
+import '@zensen/popup'
+
+<zen-popup-stack hideBlocker></zen-popup-stack>
+```
+
+If you want to change the color of the blocker itself, you can attach a class to the popup stack and manipulate the `--backdrop-color` variable as needed:
+
+```js
+import '@zensen/popup'
+
+static get styles() {
+  return css`
+    .popup-stack {
+      --backdrop-color: blue;
+    }
+  `
+}
+
+<zen-popup-stack class="popup-stack"></zen-popup-stack>
+```
