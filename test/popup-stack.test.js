@@ -10,7 +10,7 @@ import { POPUP_MESSAGE, RENDERER_POPUPS } from './utils/popup'
 const KEY_MAIN = 'main'
 const KEY_NOTIFICATIONS = 'notifications'
 
-describe.only('popup-stack', () => {
+describe('popup-stack', () => {
   let sandbox
   let instance
   let dispatchSpy
