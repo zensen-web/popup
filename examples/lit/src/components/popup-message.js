@@ -1,8 +1,8 @@
-import { css, html } from 'lit-element'
+import { css, html } from 'lit'
 
-import { Popup } from '../../../src/popup'
+import { Popup } from '../../../../src/popup'
 
-import { openPopup } from '../../../src'
+import { openPopup } from '../../../../src'
 
 class MessagePopup extends Popup {
   static get properties () {

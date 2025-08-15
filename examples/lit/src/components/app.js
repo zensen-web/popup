@@ -1,9 +1,9 @@
 import './popup-message'
 import './overlay'
 
-import { LitElement, html, css } from 'lit-element'
+import { LitElement, html, css } from 'lit'
 
-import { openPopup } from '../../../src'
+import { openPopup } from '../../../../src'
 
 export const RENDERER_POPUPS = {
   message: (hide, index, layout, model, closeHandler) => html`

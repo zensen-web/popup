@@ -1,4 +1,4 @@
-import { configure, popupReducer } from '../../src'
+import { configure, popupReducer } from '../../../src'
 
 import { createLogger } from 'redux-logger'
 

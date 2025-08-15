@@ -1,5 +1,5 @@
 import { connect } from 'pwa-helpers'
-import { LitElement, html, css } from 'lit-element'
+import { LitElement, html, css } from 'lit'
 
 import { register, unregister, pop } from './redux'
 
