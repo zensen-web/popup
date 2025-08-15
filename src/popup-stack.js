@@ -146,6 +146,8 @@ export function genComponent (store) {
 
       if (!renderer) {
         item.dismiss(new Error('Invalid popup key:', item.key))
+
+        return html``
       }
 
       return html`

@@ -1,10 +1,9 @@
-import sinon from 'sinon'
-import store from './utils/store'
+import { store } from '../test-helpers'
 
-import { expect } from '@open-wc/testing'
+import { expect } from 'vitest'
 
-import { configure, popPopup, clearPopups, openPopup } from '../src'
-import { pop, clear } from '../src/redux'
+import { configure, popPopup, clearPopups, openPopup } from '.'
+import { pop, clear } from './redux'
 
 const KEY_MAIN = 'main'
 

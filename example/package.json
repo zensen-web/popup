@@ -1,6 +1,7 @@
 {
   "name": "lit-example",
   "license": "MIT",
+  "type": "module",
   "scripts": {
     "build": "yarn webpack --config webpack.config.js",
     "serve": "rm -rf ./dist && yarn build && webpack-dev-server --config=webpack.config.js"
