@@ -1,4 +1,4 @@
-import '../src'
+import '../lib/src'
 import './preview.css'
 import { spread } from '@open-wc/lit-helpers'
 import { within } from 'storybook/test'
