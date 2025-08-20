@@ -1,6 +1,6 @@
 {
   "name": "@zensen/popup",
-  "version": "2.2.0",
+  "version": "3.0.0",
   "license": "MIT",
   "type": "module",
   "description": "A declarative popup stack for native web components",
