@@ -1,10 +1,8 @@
+import popup from '../../../../lib/src'
+
 import { css, html } from 'lit'
 
-import { Popup } from '../../../../src/popup'
-
-import { openPopup } from '../../../../src'
-
-class MessagePopup extends Popup {
+class MessagePopup extends popup.Component {
   static get properties () {
     return {
       __value: String,
@@ -69,10 +67,14 @@ class MessagePopup extends Popup {
     this.__value = ''
 
     this.__handlers = {
-      change: e => (this.__value = e.currentTarget.value),
-      close: () => (this.__transition = false),
-      open: async () => {
-        this.__result = await openPopup('message', {
+      change: event => {
+        this.__value = event.currentTarget.value
+      },
+      close: () => {
+        this.__transition = false
+      },
+      push: async () => {
+        this.__result = await popup.push('message', {
           title: 'Sub-Menu',
           message: 'Some more stuff',
         })
@@ -117,7 +119,7 @@ class MessagePopup extends Popup {
         />
       </div>
 
-      <button @click="${this.__handlers.open}">Open</button>
+      <button @click="${this.__handlers.push}">Open</button>
       <button @click="${this.__handlers.close}">Close</button>
     `
   }

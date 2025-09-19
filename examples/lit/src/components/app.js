@@ -1,9 +1,9 @@
 import './popup-message'
 import './overlay'
 
-import { LitElement, html, css } from 'lit'
+import popup from '../../../../lib/src'
 
-import { openPopup } from '../../../../src'
+import { LitElement, html, css } from 'lit'
 
 export const RENDERER_POPUPS = {
   message: (hide, index, layout, model, closeHandler) => html`
@@ -87,16 +87,18 @@ class App extends LitElement {
 
   __initHandlers () {
     this.__handlers = {
-      showOverlay: () =>
-        openPopup('overlay', {
+      showOverlay: () => {
+        popup.push('overlay', {
           title: 'Overlay',
           message: 'This is in the overlay stack',
-        }, 'overlay'),
-      showPopup: async () =>
-        (this.__result = await openPopup('message', {
+        }, 'overlay')
+      },
+      showPopup: async () => {
+        (this.__result = await popup.push('message', {
           title: 'Hello',
           message: 'Welcome to this app!',
-        })),
+        }))
+      },
     }
   }
 

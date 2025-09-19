@@ -1,7 +1,6 @@
-import { css, html } from 'lit'
+import popup from '../../../../lib/src'
 
-import { Popup } from '../../../../src/popup'
-import { openPopup } from '../../../../src'
+import { css, html } from 'lit'
 
 export const ID_CONTAINER = 'container'
 
@@ -10,10 +9,10 @@ export const TRANSITION_SIDE = {
   RIGHT: 'right',
 }
 
-const CSS_LEFT = css`left`
-const CSS_RIGHT = css`right`
+const CSS_LEFT = css`left`;
+const CSS_RIGHT = css`right`;
 
-class Overlay extends Popup {
+class Overlay extends popup.Component {
   static get properties () {
     return {
       __value: String,
@@ -91,10 +90,14 @@ class Overlay extends Popup {
     this.__value = ''
 
     this.__handlers = {
-      keyPress: e => (this.__value = e.currentTarget.value),
-      clickDismissButton: () => this.dismiss(),
-      clickBlocker: e => {
-        if (e.target.id === ID_CONTAINER) {
+      keyPress: event => {
+        this.__value = event.currentTarget.value
+      },
+      clickDismissButton: () => {
+        this.dismiss()
+      },
+      clickBlocker: event => {
+        if (event.target.id === ID_CONTAINER) {
           this.dismiss()
         }
       },
@@ -103,11 +106,12 @@ class Overlay extends Popup {
           this.onClose()
         }
       },
-      open: () =>
-        openPopup('overlay', {
+      push: () =>{
+        popup.push('overlay', {
           title: 'Overlay',
           message: 'This is in the overlay stack',
-        }, 'overlay'),
+        }, 'overlay')
+      },
     }
   }
 
@@ -142,7 +146,7 @@ class Overlay extends Popup {
           <p class="text text-title">${this.model.title}</p>
           <p class="text text-message">${this.model.message}</p>
 
-          <button @click="${this.__handlers.open}">Open</button>
+          <button @click="${this.__handlers.push}">Open</button>
 
           <button
             @click="${this.__handlers.clickDismissButton}"
